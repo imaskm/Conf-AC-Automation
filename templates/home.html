@@ -1,0 +1,75 @@
+<html>
+   <head>
+      <title>EagleEye</title>
+      <link rel = "stylesheet"
+         href = "https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
+      <script src = "https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js">
+      </script>
+      <link rel = "stylesheet"
+         href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+
+      <style>
+         .mdl-grid .mdl-grid.mdl-grid--nesting {padding: 7px; margin: 0 -8px;}
+         .mdl-cell {
+             background: #cbcbcb; text-align: center;}
+         .mdl-cell .mdl-cell {background: white;}
+         a:link, a.visited {text-decoration: none;}
+      </style>
+   </head>
+
+   <body>
+      <div class = "mdl-layout mdl-js-layout mdl-layout--fixed-header">
+         <header class = "mdl-layout__header">
+            <div class = "mdl-layout__header-row">
+                <span class = "mdl-layout-title"><a href="http://127.0.0.1:8000/EagleEye/home/" style="color: white"><h3>Eagle Eye</h3></a></span>
+            </div>
+         </header>
+
+         <main class = "mdl-layout__content">
+            <div class = "mdl-grid">
+                {% for post in posts %}
+                    <div class = "mdl-cell mdl-cell--3-col"><p style="alignment: center; font-size: 24px; margin: 15px 0px 0px 0px;">{{ post.Name }}</p>
+                        <div class="mdl-grid mdl-grid--nesting">
+                            <div class = "mdl-cell mdl-cell--12-col"><h4 id="post{{ post.Room }}">{{ post.Occupied }}/{{ post.Occupancy }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+         </main>
+      </div>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+   <script>
+    $(document).ready(function(){
+        console.log('from scsript');
+        var postsData = []
+        var processResponse = function(res){
+            //console.log(res);
+            postsData = res;
+            postsData.forEach(function(elem){
+                //console.log('elem val',elem);
+                {#console.log('elems',$('#post'+elem.pk)[0].innerHTML);#}
+                $('#post'+elem.pk)[0].innerHTML = elem.fields['Occupied']+'/'+ elem.fields['Occupancy'];
+
+            });
+
+
+        }
+        var processErr = function(err){
+            console.log(err);
+        }
+        var makeRequests = function(){
+            $.ajax({
+            method:'GET',
+            url:'http://127.0.0.1:8000/EagleEye/aj/',
+            success: processResponse,
+            error: processErr,
+            contentType:'application/json'
+
+            });
+        }
+        interval = setInterval(makeRequests,5000);
+    })
+   </script>
+   </body>
+</html>
